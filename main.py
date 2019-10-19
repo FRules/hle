@@ -1,6 +1,7 @@
 import preprocessor
 import embeddings
 import sys
+import neural_model
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
@@ -32,3 +33,10 @@ if __name__ == '__main__':
     predictions_valid = logistic_regression_classifier.predict(test_set_x_embedded)
     accuracy = accuracy_score(test_set_y, predictions_valid)
     print("Accuracy:", accuracy)
+
+    neural_model_classifier = neural_model.get_neural_model()
+    history = neural_model.train(neural_model_classifier, train_set_x_embedded,
+                                 train_set_y, batch_size=128, epochs=1500, validation_split=0.3)
+
+    neural_model.plot_history(history)
+    neural_model.evaluate(neural_model_classifier, test_set_x_embedded, test_set_y, batch_size=128)
