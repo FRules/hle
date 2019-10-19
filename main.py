@@ -3,10 +3,14 @@ import embeddings
 import sys
 import neural_model
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, confusion_matrix
+import matplotlib
+matplotlib.use('Agg')
+
 
 load_dataset = False
 dataset_timestamp = None
+
 
 if __name__ == '__main__':
     arguments = sys.argv
@@ -36,7 +40,11 @@ if __name__ == '__main__':
 
     neural_model_classifier = neural_model.get_neural_model()
     history = neural_model.train(neural_model_classifier, train_set_x_embedded,
-                                 train_set_y, batch_size=128, epochs=1500, validation_split=0.3)
+                                 train_set_y, batch_size=128, epochs=1000, validation_split=0.3)
 
     neural_model.plot_history(history)
     neural_model.evaluate(neural_model_classifier, test_set_x_embedded, test_set_y, batch_size=128)
+
+    y_pred_encoded = neural_model.predict(neural_model_classifier, test_set_x_embedded)
+    y_pred = neural_model.predicted_to_label(y_pred_encoded)
+    neural_model.plot_confusion_matrix(test_set_y, y_pred)
