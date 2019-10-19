@@ -31,4 +31,4 @@ if __name__ == '__main__':
 
     predictions_valid = logistic_regression_classifier.predict(test_set_x_embedded)
     accuracy = accuracy_score(test_set_y, predictions_valid)
-    print(accuracy)
+    print("Accuracy:", accuracy)
