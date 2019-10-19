@@ -11,7 +11,7 @@ import os
 save_directory = "save/"
 
 
-def split_dataset(train_set_x, train_set_y, ratio=0.2):
+def split_dataset(train_set_x, train_set_y, ratio: float=0.2):
     length_train_set = len(train_set_x)
     length_test_set = int(length_train_set * ratio)
     indices = random.sample(range(length_train_set), length_test_set)
@@ -25,7 +25,7 @@ def split_dataset(train_set_x, train_set_y, ratio=0.2):
     return train_set_x, train_set_y, test_set_x, test_set_y
 
 
-def get_dataset(filename):
+def get_dataset(filename: str):
     # reads the train set and splits it into the data (x)
     # and their corresponding labels (y)
     with open(filename, mode='r') as file:
@@ -43,7 +43,7 @@ def get_dataset(filename):
         return np.array(x[1:]), np.array(y[1:])
 
 
-def preprocess_document(document):
+def preprocess_document(document: str) -> str:
     # Calls a number of methods that do some modifications
     # to the document.
     document = remove_special_characters(document)
@@ -54,15 +54,15 @@ def preprocess_document(document):
     return document
 
 
-def tokenize_document(document):
+def tokenize_document(document: str) -> str:
     return word_tokenize(document)
 
 
-def lowercase_document(document):
+def lowercase_document(document: str) -> str:
     return document.lower()
 
 
-def remove_special_characters(document):
+def remove_special_characters(document: str) -> str:
     # removes some pre-defined characters from the document that
     # don't give the document any more meaning and are meant just
     # for structuring the document. It won't help the classifier.
@@ -73,7 +73,7 @@ def remove_special_characters(document):
     return document
 
 
-def get_distribution_of_classes(y):
+def get_distribution_of_classes(y) -> dict:
     # Calculates how the dataset is distributed
     # The goal is that we have a similar amount
     # of samples for every class
@@ -86,7 +86,7 @@ def get_distribution_of_classes(y):
     return distribution
 
 
-def get_properly_distributed_train_set(x, y, threshold=5):
+def get_properly_distributed_train_set(x, y, threshold: int=5):
     # Some classes can be not as good represented as others.
     # For example, the class "list" has just 485 entries,
     # but the class "yesno" has 616. In cases like this, we
@@ -107,7 +107,7 @@ def get_properly_distributed_train_set(x, y, threshold=5):
     return shuffle_x_and_y(x, y)
 
 
-def upsample_class(key, amount, x, y):
+def upsample_class(key: str, amount: int, x, y):
     indices = np.where(y == key)[0]
     new_x_entries = deepcopy(x[np.random.choice(indices, amount)])
     new_y_entries = np.full(amount, key)
@@ -128,7 +128,7 @@ def shuffle_x_and_y(x, y):
     return x, y
 
 
-def get_preprocessed_dataset(filename):
+def get_preprocessed_dataset(filename: str):
     x, y = get_dataset(filename)
     train_set_x, train_set_y, test_set_x, test_set_y = split_dataset(x, y)
     train_set_x, train_set_y = get_properly_distributed_train_set(train_set_x, train_set_y, threshold=3)
@@ -139,7 +139,7 @@ def get_preprocessed_dataset(filename):
     return train_set_x, train_set_y, test_set_x, test_set_y
 
 
-def get_timestamp():
+def get_timestamp() -> str:
     ts = time.time()
     return datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d_%H%M%S')
 
@@ -170,7 +170,7 @@ def save_preprocessed_data(train_set_x_embedded, train_set_y, test_set_x_embedde
         pickle_out.close()
 
 
-def load_preprocessed_data(timestamp, restore_not_embedded_data=False):
+def load_preprocessed_data(timestamp: str, restore_not_embedded_data: bool=False):
     pickle_in = open(save_directory + timestamp + "/train_set_x_embedded.pickle", "rb")
     train_set_x_embedded = pickle.load(pickle_in)
     pickle_in = open(save_directory + timestamp + "/test_set_x_embedded.pickle", "rb")
