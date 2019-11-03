@@ -3,7 +3,8 @@ import embeddings
 import sys
 import neural_model
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score
+import evaluation
 import matplotlib
 matplotlib.use('Agg')
 
@@ -14,6 +15,7 @@ dataset_timestamp = None
 
 if __name__ == '__main__':
     arguments = sys.argv
+    #  neural_model.visualize_model()
 
     if len(arguments) == 2:
         load_dataset = True
@@ -35,16 +37,20 @@ if __name__ == '__main__':
     logistic_regression_classifier.fit(train_set_x_embedded, train_set_y)
 
     predictions_valid = logistic_regression_classifier.predict(test_set_x_embedded)
+    evaluation.plot_confusion_matrix(test_set_y, predictions_valid, "linear")
+    evaluation.plot_confusion_matrix(test_set_y, predictions_valid, "linear", normalize=True)
     accuracy = accuracy_score(test_set_y, predictions_valid)
     print("Accuracy:", accuracy)
 
     neural_model_classifier = neural_model.get_neural_model()
     history = neural_model.train(neural_model_classifier, train_set_x_embedded,
-                                 train_set_y, batch_size=128, epochs=1000, validation_split=0.3)
+                                 train_set_y, batch_size=128, epochs=1000, validation_split=0.3,
+                                 early_stopping=False)
 
     neural_model.plot_history(history)
     neural_model.evaluate(neural_model_classifier, test_set_x_embedded, test_set_y, batch_size=128)
 
     y_pred_encoded = neural_model.predict(neural_model_classifier, test_set_x_embedded)
     y_pred = neural_model.predicted_to_label(y_pred_encoded)
-    neural_model.plot_confusion_matrix(test_set_y, y_pred)
+    evaluation.plot_confusion_matrix(test_set_y, y_pred, "neural")
+    evaluation.plot_confusion_matrix(test_set_y, y_pred, "neural", normalize=True)
