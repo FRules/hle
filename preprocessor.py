@@ -132,7 +132,6 @@ def get_preprocessed_dataset(filename: str):
     x, y = get_dataset(filename)
     train_set_x, train_set_y, test_set_x, test_set_y = split_dataset(x, y)
     train_set_x, train_set_y = get_properly_distributed_train_set(train_set_x, train_set_y, threshold=3)
-
     assert len(train_set_x) == len(train_set_y)
     assert len(test_set_x) == len(test_set_y)
 

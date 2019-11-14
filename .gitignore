@@ -1,5 +1,7 @@
 # save models
 save/*
+plots/
+tensorboard/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
