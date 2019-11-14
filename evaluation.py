@@ -1,4 +1,4 @@
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import confusion_matrix
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt

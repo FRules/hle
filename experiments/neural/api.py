@@ -10,18 +10,18 @@ import matplotlib.pyplot as plt
 
 
 def train_all_models(train_set_x, train_set_y, batch_size: int, epochs: int):
-    module_files = glob.glob("experiments/neural/cnn/experiment_1_*/model*")
+    module_files = glob.glob("experiments/neural/*/experiment*/model*")
     results = []
     for module_file in module_files:
         module_name = module_file.replace('/', '.').replace('.py', '')
         model_module = import_module(module_name)
         model = model_module.get_model()
         name = model_module.NAME
-        if "cnn" in name:
-            cnn = True
+        if "cnn" or "rnn" in name:
+            cnn_rnn = True
         else:
-            cnn = False
-        history = train(model, train_set_x, train_set_y, batch_size, epochs, early_stopping=False, cnn=cnn)
+            cnn_rnn = False
+        history = train(model, train_set_x, train_set_y, batch_size, epochs, early_stopping=False, cnn=cnn_rnn)
         results.append({"name": name, "history": history})
     return results
 

@@ -1,7 +1,8 @@
 import sys
 import preprocessor
 import embeddings
-from experiments.neural import neural_api
+from experiments.neural import api as neural_api
+from experiments.linear import api as linear_api
 
 
 def main(arguments):
@@ -20,8 +21,19 @@ def main(arguments):
             preprocessor.load_preprocessed_data(dataset_timestamp, restore_not_embedded_data=True)
 
     print("Length train set:", len(train_set_x_embedded), "\nLength test set:", len(test_set_x_embedded))
+
+    # train_neural_models(train_set_x_embedded, train_set_y)
+    train_linear_models(train_set_x_embedded, train_set_y, test_set_x_embedded, test_set_y)
+
+
+def train_neural_models(train_set_x_embedded, train_set_y):
     results = neural_api.train_all_models(train_set_x_embedded, train_set_y, batch_size=128, epochs=300)
     neural_api.plot_histories(results)
+
+
+def train_linear_models(train_set_x_embedded, train_set_y, test_set_x_embedded, test_set_y):
+    results = linear_api.train_all_models(train_set_x_embedded, train_set_y, test_set_x_embedded, test_set_y)
+    linear_api.visualize_results(results, test_set_y)
 
 
 if __name__ == '__main__':
