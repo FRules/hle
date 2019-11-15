@@ -7,8 +7,8 @@ NAME = "neural_2_dense_sgd_high_lr"
 
 def get_model():
     model = Sequential()
-    model.add(Dense(768, input_dim=1024, activation="relu"))
-    model.add(Dense(384, activation="relu", kernel_initializer="uniform"))
+    model.add(Dense(64, input_dim=1024, activation="relu"))
+    model.add(Dense(32, activation="relu", kernel_initializer="uniform"))
     model.add(Dense(4))
     model.add(Activation("softmax"))
 

@@ -6,7 +6,7 @@ NAME = "neural_cnn_dropout"
 
 
 def get_model():
-    n_filters = 16
+    n_filters = 8
     kernel_size = 5
 
     model = Sequential()
@@ -17,10 +17,10 @@ def get_model():
     model.add(Conv1D(n_filters * 4, kernel_size, activation='relu'))
     model.add(MaxPooling1D(35))
     model.add(Flatten())
-    model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.5))
     model.add(Dense(64, activation='relu'))
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.75))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dropout(0.75))
     model.add(Dense(4))
     model.add(Activation('softmax'))
 

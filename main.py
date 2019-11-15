@@ -1,28 +1,19 @@
+import sys
 import preprocessor
 import embeddings
-import sys
-import neural_model
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
-import evaluation
-import matplotlib
-matplotlib.use('Agg')
+from experiments.neural import api as neural_api
+from experiments.linear import api as linear_api
+
+from config import DATA_PATH
 
 
-load_dataset = False
-dataset_timestamp = None
-
-
-if __name__ == '__main__':
-    arguments = sys.argv
-    #  neural_model.visualize_model()
-
+def main(arguments):
     if len(arguments) == 2:
         load_dataset = True
         dataset_timestamp = arguments[1]
 
     if load_dataset is False:
-        train_set_x, train_set_y, test_set_x, test_set_y = preprocessor.get_preprocessed_dataset("Questions.csv")
+        train_set_x, train_set_y, test_set_x, test_set_y = preprocessor.get_preprocessed_dataset(DATA_PATH)
         train_set_x_embedded, test_set_x_embedded = embeddings.get_embeddings(train_set_x, test_set_x)
         preprocessor.save_preprocessed_data(train_set_x_embedded, train_set_y,
                                             test_set_x_embedded, test_set_y,
@@ -33,24 +24,25 @@ if __name__ == '__main__':
 
     print("Length train set:", len(train_set_x_embedded), "\nLength test set:", len(test_set_x_embedded))
 
-    logistic_regression_classifier = LogisticRegression(multi_class="multinomial", solver="lbfgs", max_iter=10000)
-    logistic_regression_classifier.fit(train_set_x_embedded, train_set_y)
+    # train_neural_models(train_set_x_embedded, train_set_y, test_set_x_embedded, test_set_y)
+    train_linear_models(train_set_x_embedded, train_set_y, test_set_x_embedded, test_set_y)
 
-    predictions_valid = logistic_regression_classifier.predict(test_set_x_embedded)
-    evaluation.plot_confusion_matrix(test_set_y, predictions_valid, "linear")
-    evaluation.plot_confusion_matrix(test_set_y, predictions_valid, "linear", normalize=True)
-    accuracy = accuracy_score(test_set_y, predictions_valid)
-    print("Accuracy:", accuracy)
 
-    neural_model_classifier = neural_model.get_neural_model()
-    history = neural_model.train(neural_model_classifier, train_set_x_embedded,
-                                 train_set_y, batch_size=128, epochs=1000, validation_split=0.3,
-                                 early_stopping=False)
+def train_neural_models(train_set_x_embedded, train_set_y, test_set_x_embedded, test_set_y):
+    models = neural_api.get_all_models()
+    train_results = neural_api.train_all_models(models, train_set_x_embedded, train_set_y, batch_size=128, epochs=300)
+    neural_api.plot_histories(train_results)
+    test_results = neural_api.evaluate_all_models(models, test_set_x_embedded, test_set_y, batch_size=128)
+    print(test_results)
 
-    neural_model.plot_history(history)
-    neural_model.evaluate(neural_model_classifier, test_set_x_embedded, test_set_y, batch_size=128)
 
-    y_pred_encoded = neural_model.predict(neural_model_classifier, test_set_x_embedded)
-    y_pred = neural_model.predicted_to_label(y_pred_encoded)
-    evaluation.plot_confusion_matrix(test_set_y, y_pred, "neural")
-    evaluation.plot_confusion_matrix(test_set_y, y_pred, "neural", normalize=True)
+def train_linear_models(train_set_x_embedded, train_set_y, test_set_x_embedded, test_set_y):
+    models = linear_api.get_all_models()
+    train_results = linear_api.train_all_models(models, train_set_x_embedded, train_set_y, test_set_x_embedded, test_set_y)
+    linear_api.visualize_results(train_results, test_set_y)
+    test_results = linear_api.evaluate_all_models(models, test_set_x_embedded, test_set_y)
+    print(test_results)
+
+
+if __name__ == '__main__':
+    main(sys.argv)

@@ -9,19 +9,33 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
-def train_all_models(train_set_x, train_set_y, batch_size: int, epochs: int):
-    module_files = glob.glob("experiments/neural/*/experiment*/model*")
-    results = []
+def get_all_models():
+    models = []
+    module_files = glob.glob("experiments/neural/cnn/experiment_1*/model*")
     for module_file in module_files:
         module_name = module_file.replace('/', '.').replace('.py', '')
         model_module = import_module(module_name)
         model = model_module.get_model()
         name = model_module.NAME
-        if "cnn" or "rnn" in name:
-            cnn_rnn = True
+        if "cnn" in name:
+            cnn = True
         else:
-            cnn_rnn = False
-        history = train(model, train_set_x, train_set_y, batch_size, epochs, early_stopping=False, cnn=cnn_rnn)
+            cnn = False
+        models.append({
+            "model": model,
+            "name": name,
+            "is_cnn": cnn
+        })
+    return models
+
+
+def train_all_models(models, train_set_x, train_set_y, batch_size: int, epochs: int):
+    results = []
+    for m in models:
+        is_cnn = m["is_cnn"]
+        model = m["model"]
+        name = m["name"]
+        history = train(model, train_set_x, train_set_y, batch_size, epochs, early_stopping=False, cnn=is_cnn)
         results.append({"name": name, "history": history})
     return results
 
@@ -89,3 +103,30 @@ def to_categorical(y):
         one_hot_encoding_index = cfg.CLASSES.index(label)
         y_encoded[sample_index, one_hot_encoding_index] = 1
     return y_encoded
+
+
+def evaluate_all_models(models, test_set_x, test_set_y, batch_size: int):
+    results = []
+    for m in models:
+        name = m["name"]
+        model = m["model"]
+        is_cnn = m["is_cnn"]
+        loss, accuracy = evaluate(model, test_set_x, test_set_y, batch_size, is_cnn)
+        results.append({
+            "name": name,
+            "loss": loss,
+            "accuracy": accuracy
+        })
+    return results
+
+
+def evaluate(model: Model, test_set_x, test_set_y, batch_size: int, cnn: bool):
+    test_set_y = to_categorical(test_set_y)
+    if cnn:
+        test_set_x = np.expand_dims(test_set_x, axis=2)
+    loss, accuracy = model.evaluate(test_set_x, test_set_y, batch_size=batch_size, verbose=2)
+    return loss, accuracy
+
+
+def predict(model: Model, test_set_x):
+    return model.predict(test_set_x)
