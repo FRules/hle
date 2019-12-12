@@ -8,7 +8,7 @@ import datetime
 import pickle
 import os
 
-save_directory = "save/"
+save_directory = os.path.join(os.getcwd(), "save")
 
 
 def split_dataset(train_set_x, train_set_y, ratio: float=0.2):
@@ -147,42 +147,42 @@ def save_preprocessed_data(train_set_x_embedded, train_set_y, test_set_x_embedde
                            test_set_y, train_set_x=None, test_set_x=None):
     timestamp = get_timestamp()
     os.mkdir(save_directory + timestamp)
-    pickle_out = open(save_directory + timestamp + "/train_set_x_embedded.pickle", "wb")
+    pickle_out = open(os.path.join(save_directory, timestamp, "train_set_x_embedded.pickle"), "wb")
     pickle.dump(train_set_x_embedded, pickle_out)
     pickle_out.close()
-    pickle_out = open(save_directory + timestamp + "/test_set_x_embedded.pickle", "wb")
+    pickle_out = open(os.path.join(save_directory, timestamp, "test_set_x_embedded.pickle"), "wb")
     pickle.dump(test_set_x_embedded, pickle_out)
     pickle_out.close()
-    pickle_out = open(save_directory + timestamp + "/train_set_y.pickle", "wb")
+    pickle_out = open(os.path.join(save_directory, timestamp, "train_set_y.pickle"), "wb")
     pickle.dump(train_set_y, pickle_out)
     pickle_out.close()
-    pickle_out = open(save_directory + timestamp + "/test_set_y.pickle", "wb")
+    pickle_out = open(os.path.join(save_directory, timestamp, "test_set_y.pickle"), "wb")
     pickle.dump(test_set_y, pickle_out)
     pickle_out.close()
 
     if train_set_x is not None and test_set_x is not None:
-        pickle_out = open(save_directory + timestamp + "/train_set_x.pickle", "wb")
+        pickle_out = open(os.path.join(save_directory, timestamp, "train_set_x.pickle"), "wb")
         pickle.dump(train_set_x, pickle_out)
         pickle_out.close()
-        pickle_out = open(save_directory + timestamp + "/test_set_x.pickle", "wb")
+        pickle_out = open(os.path.join(save_directory, timestamp, "test_set_x.pickle"), "wb")
         pickle.dump(test_set_x, pickle_out)
         pickle_out.close()
 
 
 def load_preprocessed_data(timestamp: str, restore_not_embedded_data: bool=False):
-    pickle_in = open(save_directory + timestamp + "/train_set_x_embedded.pickle", "rb")
+    pickle_in = open(os.path.join(save_directory, timestamp, "train_set_x_embedded.pickle"), "rb")
     train_set_x_embedded = pickle.load(pickle_in)
-    pickle_in = open(save_directory + timestamp + "/test_set_x_embedded.pickle", "rb")
+    pickle_in = open(os.path.join(save_directory, timestamp, "test_set_x_embedded.pickle"), "rb")
     test_set_x_embedded = pickle.load(pickle_in)
-    pickle_in = open(save_directory + timestamp + "/train_set_y.pickle", "rb")
+    pickle_in = open(os.path.join(save_directory, timestamp, "train_set_y.pickle"), "rb")
     train_set_y = pickle.load(pickle_in)
-    pickle_in = open(save_directory + timestamp + "/test_set_y.pickle", "rb")
+    pickle_in = open(os.path.join(save_directory, timestamp, "test_set_y.pickle"), "rb")
     test_set_y = pickle.load(pickle_in)
 
     if restore_not_embedded_data is True:
-        pickle_in = open(save_directory + timestamp + "/train_set_x.pickle", "rb")
+        pickle_in = open(os.path.join(save_directory, timestamp, "train_set_x.pickle"), "rb")
         train_set_x = pickle.load(pickle_in)
-        pickle_in = open(save_directory + timestamp + "/test_set_x.pickle", "rb")
+        pickle_in = open(os.path.join(save_directory, timestamp, "test_set_x.pickle"), "rb")
         test_set_x = pickle.load(pickle_in)
         return train_set_x_embedded, train_set_y, test_set_x_embedded, test_set_y, train_set_x, test_set_x
     else:
