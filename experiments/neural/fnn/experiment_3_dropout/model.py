@@ -2,7 +2,8 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation, Dropout
 from tensorflow.keras.optimizers import Adam
 
-NAME = "neural_2_dense_adam_dropout"
+NAME = "fnn_experiment_3_dropout"
+PLOT_TITLE = "FNN Experiment 3 with dropout"
 
 
 def get_model():

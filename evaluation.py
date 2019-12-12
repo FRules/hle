@@ -16,6 +16,8 @@ def plot_confusion_matrix(y_true, y_pred, plot_name, normalize=False, title=None
         else:
             title = 'Confusion matrix, without normalization'
             plot_name = plot_name + "_not_normalized.pdf"
+    else:
+        plot_name = plot_name + ".pdf"
 
     cm = confusion_matrix(y_true, y_pred)
     if normalize:
@@ -53,4 +55,4 @@ def plot_confusion_matrix(y_true, y_pred, plot_name, normalize=False, title=None
     fig.tight_layout()
 
     figure = ax.get_figure()
-    figure.savefig('plots/' + plot_name, dpi=400)
+    figure.savefig('plots/confusion_matrix/' + plot_name, dpi=400)

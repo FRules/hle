@@ -49,7 +49,7 @@ def evaluate_all_models(models, test_set_x, test_set_y):
     for m in models:
         name = m["name"]
         model = m["model"]
-        accuracy = evaluate(model, test_set_x, test_set_y)
+        accuracy = evaluate(model, name, test_set_x, test_set_y)
         results.append({
             "name": name,
             "accuracy": accuracy
@@ -57,9 +57,9 @@ def evaluate_all_models(models, test_set_x, test_set_y):
     return results
 
 
-def evaluate(model, test_set_x, test_set_y):
+def evaluate(model, name, test_set_x, test_set_y):
     predictions_valid = model.predict(test_set_x)
-    evaluation.plot_confusion_matrix(test_set_y, predictions_valid, "linear")
-    evaluation.plot_confusion_matrix(test_set_y, predictions_valid, "linear", normalize=True)
+    evaluation.plot_confusion_matrix(test_set_y, predictions_valid, name)
+    evaluation.plot_confusion_matrix(test_set_y, predictions_valid, name, normalize=True)
     accuracy = accuracy_score(test_set_y, predictions_valid)
     return accuracy

@@ -2,7 +2,8 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation, Dropout
 from tensorflow.keras.optimizers import SGD
 
-NAME = "neural_2_dense_sgd_high_lr"
+NAME = "fnn_experiment_2"
+PLOT_TITLE = "FNN Experiment 2"
 
 
 def get_model():

@@ -2,7 +2,8 @@ from tensorflow.keras import Sequential
 from tensorflow.keras.layers import MaxPooling1D, Dense, Dropout, Input, Conv1D, Activation, Flatten
 from tensorflow.keras.optimizers import Adam
 
-NAME = "neural_cnn_dropout"
+NAME = "cnn_experiment_1_dropout"
+PLOT_TITLE = "CNN Experiment 1 with dropout"
 
 
 def get_model():

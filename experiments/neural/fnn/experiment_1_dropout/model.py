@@ -2,14 +2,15 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation, Dropout
 from tensorflow.keras.optimizers import SGD
 
-NAME = "neural_2_dense_sgd_low_lr_dropout"
+NAME = "fnn_experiment_1_dropout"
+PLOT_TITLE = "FNN Experiment 1 with dropout"
 
 
 def get_model():
     model = Sequential()
-    model.add(Dense(128, input_dim=1024, activation="relu"))
+    model.add(Dense(64, input_dim=1024, activation="relu"))
     model.add(Dropout(0.75))
-    model.add(Dense(64, activation="relu", kernel_initializer="uniform"))
+    model.add(Dense(32, activation="relu", kernel_initializer="uniform"))
     model.add(Dropout(0.75))
     model.add(Dense(4))
     model.add(Activation("softmax"))
