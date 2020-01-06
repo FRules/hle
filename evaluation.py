@@ -3,9 +3,10 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 classes = ["list", "factoid", "summary", "yesno"]
-
+plot_directory = os.path.join(os.getcwd(), "plots")
 
 def plot_confusion_matrix(y_true, y_pred, plot_name, normalize=False, title=None, cmap=plt.cm.Blues):
     plot_name = plot_name + "_confusion_matrix"

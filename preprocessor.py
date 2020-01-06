@@ -7,6 +7,8 @@ import time
 import datetime
 import pickle
 import os
+import spacy
+import ling_feature_extractor
 
 save_directory = os.path.join(os.getcwd(), "save")
 
@@ -25,9 +27,12 @@ def split_dataset(train_set_x, train_set_y, ratio: float=0.2):
     return train_set_x, train_set_y, test_set_x, test_set_y
 
 
-def get_dataset(filename: str):
+def get_dataset(filename: str, include_pos_tags: bool=False):
     # reads the train set and splits it into the data (x)
     # and their corresponding labels (y)
+    if include_pos_tags:
+        en_nlp = spacy.load("en_core_web_md")
+
     with open(filename, mode='r') as file:
         reader = csv.reader(file, delimiter=';')
         x = []
@@ -35,6 +40,8 @@ def get_dataset(filename: str):
         for row in reader:
             document = row[0]
             label = row[1]
+            if include_pos_tags:
+                document = ling_feature_extractor.get_question_with_pos_tags(document, en_nlp)
             document = preprocess_document(document)
             x.append(document)
             y.append(label)
@@ -48,9 +55,6 @@ def preprocess_document(document: str) -> str:
     # to the document.
     document = remove_special_characters(document)
     document = lowercase_document(document)
-
-    # tokenization should be the last step here
-    # document = tokenize_document(document)
     return document
 
 
@@ -128,8 +132,8 @@ def shuffle_x_and_y(x, y):
     return x, y
 
 
-def get_preprocessed_dataset(filename: str):
-    x, y = get_dataset(filename)
+def get_preprocessed_dataset(filename: str, include_pos_tags: bool=False):
+    x, y = get_dataset(filename, include_pos_tags)
     train_set_x, train_set_y, test_set_x, test_set_y = split_dataset(x, y)
     train_set_x, train_set_y = get_properly_distributed_train_set(train_set_x, train_set_y, threshold=3)
     assert len(train_set_x) == len(train_set_y)
@@ -146,7 +150,7 @@ def get_timestamp() -> str:
 def save_preprocessed_data(train_set_x_embedded, train_set_y, test_set_x_embedded,
                            test_set_y, train_set_x=None, test_set_x=None):
     timestamp = get_timestamp()
-    os.mkdir(save_directory + timestamp)
+    os.mkdir(os.path.join(save_directory, timestamp))
     pickle_out = open(os.path.join(save_directory, timestamp, "train_set_x_embedded.pickle"), "wb")
     pickle.dump(train_set_x_embedded, pickle_out)
     pickle_out.close()
